@@ -1,0 +1,9 @@
+version: '2'
+services:
+  ffmpeg:
+    image: "nikita/opencv:1.0"
+    volumes:
+    - .:/opt
+    - /home/lab/lab/data/new:/data/new
+    container_name: getvideo
+    entrypoint: /opt/video.sh

@@ -1,0 +1,13 @@
+version: '2'
+services:
+  test:
+    image: "nikita/opencv:1.0"
+    networks:
+    - server_lab
+    volumes:
+    - .:/opt
+    container_name: opencv_test
+    command: /opt/do.sh
+networks:
+  server_lab:
+    external: true

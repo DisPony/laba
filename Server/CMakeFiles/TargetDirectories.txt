@@ -1,0 +1,3 @@
+/opt/CMakeFiles/rebuild_cache.dir
+/opt/CMakeFiles/edit_cache.dir
+/opt/CMakeFiles/server.dir

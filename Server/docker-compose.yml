@@ -1,0 +1,14 @@
+version: '2'
+services:
+  server:
+    image: "nikita/opencv:1.0"
+    networks:
+      - lab
+    volumes:
+    - .:/opt
+    container_name: opencv
+    command: /opt/do.sh
+networks:
+  lab:
+    # Use a custom driver
+    driver: bridge
