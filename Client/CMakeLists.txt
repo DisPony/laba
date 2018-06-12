@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project( server )
+find_package( OpenCV REQUIRED )
+find_package (Threads)
+add_executable( client client.cpp )
+target_link_libraries( client ${OpenCV_LIBS} ${CMAKE_THREAD_LIBS_INIT})
