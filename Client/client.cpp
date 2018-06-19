@@ -65,8 +65,6 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-
-
     //----------------------------------------------------------
     //OpenCV Code
     //----------------------------------------------------------
@@ -80,14 +78,12 @@ int main(int argc, char** argv)
     char answer[2];
     strcpy(answer,"OK");
 
-    //make img continuos
     if ( ! img.isContinuous() ) { 
           img = img.clone();
     }
 
-    //namedWindow("CV Video Client",1);
-    //std::cerr << "recv failed, received bytes = " << bytes << std::endl;
     while (true) {
+        ofstream fout;
         int failCounter = 0;
         std::cout << "Image Size:" << imgSize << std::endl;
         if ((bytes = recv(sokt, iptr, imgSize , MSG_WAITALL)) == -1) {
@@ -99,46 +95,20 @@ int main(int argc, char** argv)
             continue;
         }
         failCounter = 0;
-        
-//        Mat gray;
-        Mat dst;
-        Point2f pc(img.cols/2., img.rows/2.);
-        Mat r = cv::getRotationMatrix2D(pc, -25, 1.0);
-        warpAffine(img, dst, r, img.size()); // what size I should use?
-        
-        Rect region_of_interest = Rect(4,212,1534,314);
-        Mat image_roi = dst(region_of_interest);
-
-
-//        cvtColor(image_roi, gray, COLOR_BGR2GRAY);
-//        imwrite("rotated_im.png", gray);
-        Mat r = cv::getRotationMatrix2D(pc, 25, 1.0);
-        warpAffine(img, dst, r, img.size());
-        std::vector< Rect_<int> > bus;
-
-
-        bus_cascade.detectMultiScale(image_roi, bus);
-        
-        for(int i = 0; i < bus.size(); i++) {
-            Rect bus_i = bus[i];
-            //Mat one_bus = gray(bus_i);
-            rectangle(dst, bus_i, CV_RGB(0, 255,0), 1);
-        }
-//                Эмуляция обработки
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
         std::time_t t = std::time(0);
-        //std::string(t)
-        std::stringstream ss;
+        std::vector< Rect_<int> > bus;
+        bus_cascade.detectMultiScale(img, bus);
+
+        fout.open("buses", ios_base::app);
+        for(int i = 0; i < bus.size(); i++) {
+            std::stringstream ss;
+            Rect bus_i = bus[i];
+            ss << t << " " << bus_i.x << " " << bus_i.y << " " <<bus_i.height << " " << bus_i.width << std::endl;
+        }
+        fout << ss.str();
+        fout.close();
         ss << "test" << t << ".jpg";
-        imwrite(ss.str(), dst);
- /*       
-        cv::Mat dst;
-        cv::Point2f pc(img.cols/2., img.rows/2.);
-        cv::Mat r = cv::getRotationMatrix2D(pc, -25, 1.0);
-        cv::warpAffine(img, dst, r, img.size()); // what size I should use?
-        cv::imwrite("rotated_im.png", dst);
-*/    
+        imwrite(ss.str(), img);
         send(sokt, answer, 2, 0);
     }   
 
