@@ -63,25 +63,26 @@ int main(int argc, char** argv)
     //--------------------------------------------------------
     //networking stuff: socket, bind, listen
     //--------------------------------------------------------
-    int     localSocket,
-            remoteSocket,
-            port = 4097;
+    int     localSocket;
+    int     remoteSocket;
+    int     port = 4097;
 
-    struct  sockaddr_in localAddr,
-            remoteAddr;
+    struct  sockaddr_in  localAddr;
+    struct  sockaddr_in remoteAddr;
 
-    pthread_t thread_id, thread_getvideo;
+    pthread_t       thread_id;
+    pthread_t thread_getvideo;
 
 
 
     int addrLen = sizeof(struct sockaddr_in);
 
 
-//Start listen
-    if ( (argc > 1) && (strcmp(argv[1],"-h") == 0) ) {
+    //Start listen
+    if ( (argc > 1) && (strcmp(argv[1],"-h") == 0) ) { //Почему второй аргумент сравнивается с -h?
         std::cerr << "usage: ./cv_video_srv [port] [capture device]\n" <<
                   "port           : socket port (4097 default)\n" <<
-                  "capture device : (0 default)\n" << std::endl;
+                  "capture device : (0 default)\n" << std::endl; //
 
         exit(1);
     }
@@ -93,6 +94,7 @@ int main(int argc, char** argv)
         perror("socket() call failed!!");
     }
 
+    //
     localAddr.sin_family = AF_INET;
     localAddr.sin_addr.s_addr = INADDR_ANY;
     localAddr.sin_port = htons( port );
@@ -107,11 +109,8 @@ int main(int argc, char** argv)
 
     std::cout <<  "Waiting for connections...\n"
               <<  "Server Port:" << port << std::endl;
-//Start capture serial
-//              pthread_create(&thread_getvideo,NULL,getvideo,NULL);
+
     std::thread t_getvideo(getvideo, &remoteSocket);
-
-
 
 
     //accept connection from an incoming client
